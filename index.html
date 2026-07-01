@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en-GB" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Make Microsoft 365 Copilot Work for You</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg: linear-gradient(165deg, #f3f0ff 0%, #eef5ff 42%, #eafaf4 100%);
+  --surface:#ffffff;
+  --surface-2:#f6f8ff;
+  --text:#1a1830;
+  --text-soft:#5b5870;
+  --border:#e6e3f2;
+  --shadow:rgba(60,40,120,.12);
+  --hero:linear-gradient(120deg, #6E48E8 0%, #4F7CF7 52%, #18B6C9 100%);
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg: linear-gradient(165deg, #181626 0%, #141a26 60%, #121f22 100%);
+    --surface:#221f33;
+    --surface-2:#1b2230;
+    --text:#f2f1f8;
+    --text-soft:#b7b4c8;
+    --border:#35304a;
+    --shadow:rgba(0,0,0,.5);
+    --hero:linear-gradient(120deg, #7C5AF0 0%, #4F7CF7 52%, #1CC4D6 100%);
+  }
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  background:var(--bg);
+  background-attachment:fixed;
+  color:var(--text);
+  line-height:1.55;
+}
+.wrap{max-width:1140px; margin-inline:auto; padding:30px 20px 60px}
+
+/* Hero */
+.hero{
+  background:var(--hero);
+  color:#fff;
+  border-radius:24px;
+  padding:46px 38px;
+  text-align:center;
+  box-shadow:0 18px 50px var(--shadow);
+  margin-bottom:30px;
+}
+.eyebrow{
+  display:inline-block;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.74rem;
+  font-weight:700;
+  padding:6px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.18);
+  margin-bottom:16px;
+}
+.hero h1{
+  margin:0 0 14px;
+  font-size:2.6rem;
+  line-height:1.1;
+  letter-spacing:-.02em;
+  font-weight:800;
+}
+.hero .hl{
+  text-decoration:underline;
+  text-decoration-color:#FFD23F;
+  text-decoration-thickness:6px;
+  text-underline-offset:5px;
+}
+.hero .lede{
+  margin:0 auto;
+  max-width:680px;
+  font-size:1.12rem;
+  color:rgba(255,255,255,.92);
+}
+
+/* Why section */
+.section-title{
+  font-size:1.5rem;
+  margin:0 0 4px;
+  letter-spacing:-.01em;
+}
+.section-sub{margin:0 0 20px; color:var(--text-soft)}
+.why-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+  gap:16px;
+  margin-bottom:22px;
+}
+.why-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-top:4px solid var(--c);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 6px 18px var(--shadow);
+}
+.why-ico{
+  width:44px; height:44px;
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  background:color-mix(in srgb, var(--c) 16%, transparent);
+  color:var(--c);
+  margin-bottom:12px;
+}
+.why-ico svg{width:24px; height:24px}
+.why-card h3{margin:0 0 6px; font-size:1.1rem}
+.why-card p{margin:0; color:var(--text-soft); font-size:.95rem}
+.steps{
+  list-style:none;
+  margin:0 0 38px;
+  padding:18px 20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px 26px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:0 6px 18px var(--shadow);
+}
+.steps li{display:flex; align-items:center; gap:12px; font-weight:600; font-size:.98rem}
+.step-n{
+  flex:0 0 auto;
+  width:30px; height:30px;
+  border-radius:50%;
+  background:var(--hero);
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; font-size:.95rem;
+}
+
+/* App chooser: left rail + right prompt */
+.app{
+  display:grid;
+  grid-template-columns:300px minmax(0,1fr);
+  gap:22px;
+  align-items:start;
+}
+.tablist{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  position:sticky;
+  top:18px;
+}
+.tile{
+  display:flex;
+  gap:13px;
+  align-items:center;
+  text-align:start;
+  width:100%;
+  padding:14px 15px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  cursor:pointer;
+  font:inherit;
+  color:inherit;
+  box-shadow:0 2px 8px var(--shadow);
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .18s ease;
+}
+.tile:hover{transform:translateY(-2px); border-color:var(--accent); box-shadow:0 8px 20px var(--shadow)}
+.tile:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tile.active{background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 12px 26px var(--shadow)}
+.icon{
+  flex:0 0 auto;
+  width:42px; height:42px;
+  border-radius:11px;
+  background:var(--accent);
+  color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .18s ease;
+}
+.icon svg{width:24px; height:24px}
+.tile.active .icon{background:rgba(255,255,255,.24)}
+.tile-text{display:flex; flex-direction:column; gap:2px; min-width:0}
+.tile-name{font-weight:700; font-size:1.02rem}
+.tile-desc{font-size:.82rem; color:var(--text-soft); line-height:1.35}
+.tile.active .tile-desc{color:rgba(255,255,255,.88)}
+
+.panels{min-width:0}
+.panel{display:none}
+.panel.active{
+  display:block;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:24px 24px 28px;
+  box-shadow:0 10px 30px var(--shadow);
+}
+.panel-head{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; flex-wrap:wrap; margin-bottom:4px;
+}
+.panel-head h2{
+  margin:0; font-size:1.5rem; color:var(--accent);
+  display:flex; align-items:center; gap:10px;
+}
+.panel-head h2 .dot{width:13px; height:13px; border-radius:50%; background:var(--accent)}
+.panel-hint{margin:4px 0 16px; color:var(--text-soft); font-size:.92rem}
+.copy-btn{
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--accent); color:#fff; border:none; border-radius:9px;
+  padding:10px 16px; font:inherit; font-weight:700; font-size:.92rem;
+  cursor:pointer; transition:filter .12s ease, background .2s ease;
+}
+.copy-btn:hover{filter:brightness(.93)}
+.copy-btn:focus-visible{outline:2px solid var(--text); outline-offset:2px}
+.copy-btn.copied{background:#107c41}
+.btn-ico{width:17px; height:17px}
+.prompt{
+  margin:0;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-inline-start:4px solid var(--accent);
+  border-radius:12px;
+  padding:18px 20px;
+  white-space:pre-wrap;
+  word-wrap:break-word;
+  font-family:inherit;
+  font-size:.95rem;
+  line-height:1.6;
+  color:var(--text);
+  overflow-x:auto;
+}
+footer{margin-top:34px; text-align:center; color:var(--text-soft); font-size:.85rem}
+
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .tablist{position:static; flex-direction:row; flex-wrap:wrap}
+  .tile{flex:1 1 200px}
+  .hero{padding:36px 22px}
+  .hero h1{font-size:2rem}
+}
+@media (max-width:480px){
+  .hero h1{font-size:1.7rem}
+  .tile{flex:1 1 100%}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">Your personal prompt library</span>
+    <h1>Make Microsoft 365 Copilot work for <span class="hl">you</span></h1>
+    <p class="lede">These aren't generic prompts. Each one teaches Copilot how <em>you</em> actually work — then builds a prompt library that's genuinely yours.</p>
+  </header>
+
+  <section class="why" aria-label="Why these prompts work">
+    <h2 class="section-title">Why these work</h2>
+    <p class="section-sub">Most prompts give everyone the same answer. These do the opposite.</p>
+    <div class="why-grid">
+      <div class="why-card" style="--c:#6E48E8">
+        <span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg></span>
+        <h3>They read your real work</h3>
+        <p>Each prompt asks Copilot to look across your actual emails, chats, meetings and documents — not generic examples — to spot how you genuinely work.</p>
+      </div>
+      <div class="why-card" style="--c:#18B6C9">
+        <span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-4 3.4-6.5 7-6.5s7 2.5 7 6.5"/></svg></span>
+        <h3>Personal to you</h3>
+        <p>Built from your patterns, your library comes out unique to you. Two people running the same prompt get different results — yours fits your role, projects and style.</p>
+      </div>
+      <div class="why-card" style="--c:#FF8C42">
+        <span class="why-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 8"/><path d="M20 3.5V8h-4.5"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 16"/><path d="M4 20.5V16h4.5"/></svg></span>
+        <h3>Reusable every day</h3>
+        <p>You get copy-and-paste-ready prompts to use again and again. The Email and Calendar prompts go further — they interview you, then hand you a personal framework.</p>
+      </div>
+    </div>
+    <ol class="steps">
+      <li><span class="step-n">1</span> Pick an app on the left</li>
+      <li><span class="step-n">2</span> Copy its prompt</li>
+      <li><span class="step-n">3</span> Paste into Copilot — it tailors everything to you</li>
+    </ol>
+  </section>
+
+  <section class="app">
+    <div class="tablist" role="tablist" aria-label="Choose an app">
+      <button class="tile active" data-target="word" style="--accent:#185ABD" role="tab" aria-selected="true" aria-controls="word">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1.5"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/></svg></span>
+        <span class="tile-text"><span class="tile-name">Word</span><span class="tile-desc">Reports, proposals, training &amp; polished docs</span></span>
+      </button>
+
+      <button class="tile" data-target="excel" style="--accent:#107C41" role="tab" aria-selected="false" aria-controls="excel">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="1.5"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>
+        <span class="tile-text"><span class="tile-name">Excel</span><span class="tile-desc">Trackers, reports, analysis &amp; data-heavy work</span></span>
+      </button>
+
+      <button class="tile" data-target="powerpoint" style="--accent:#C43E1C" role="tab" aria-selected="false" aria-controls="powerpoint">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="1.5"/><line x1="12" y1="17" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="8" y1="13" x2="8" y2="10"/><line x1="12" y1="13" x2="12" y2="8"/><line x1="16" y1="13" x2="16" y2="11"/></svg></span>
+        <span class="tile-text"><span class="tile-name">PowerPoint</span><span class="tile-desc">Decks, training &amp; enablement slides</span></span>
+      </button>
+
+      <button class="tile" data-target="meetings" style="--accent:#5B5FC7" role="tab" aria-selected="false" aria-controls="meetings">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg></span>
+        <span class="tile-text"><span class="tile-name">Meetings</span><span class="tile-desc">Prep, recaps, action items &amp; follow-ups</span></span>
+      </button>
+
+      <button class="tile" data-target="email" style="--accent:#0F6CBD" role="tab" aria-selected="false" aria-controls="email">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg></span>
+        <span class="tile-text"><span class="tile-name">Email</span><span class="tile-desc">Build a personal inbox prioritisation framework</span></span>
+      </button>
+
+      <button class="tile" data-target="calendar" style="--accent:#038387" role="tab" aria-selected="false" aria-controls="calendar">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="1.5"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="8" y1="3" x2="8" y2="6"/><line x1="16" y1="3" x2="16" y2="6"/></svg></span>
+        <span class="tile-text"><span class="tile-name">Calendar Management</span><span class="tile-desc">Build a personal time &amp; calendar framework</span></span>
+      </button>
+    </div>
+
+    <div class="panels">
+      <article class="panel active" id="word" style="--accent:#185ABD" role="tabpanel">
+        <div class="panel-head">
+          <h2><span class="dot"></span>Word</h2>
+          <button class="copy-btn" type="button" aria-label="Copy the Word prompt"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 16V5a1 1 0 0 1 1-1h9"/></svg><span class="copy-label">Copy prompt</span></button>
+        </div>
+        <p class="panel-hint">Paste this into Copilot in Word.</p>
+        <pre class="prompt">
+Based on everything you can see across my Microsoft 365 environment — including my emails, Teams chats, meeting transcripts, documents, and the type of work I do — analyse how I typically create and use documents in Word.
+
+Identify the most common types of documents I work on, such as reports, proposals, summaries, training materials, communications, or formal documents. Look for patterns in the requests I receive and the way I structure my content.
+
+Then generate a set of high-quality, practical Copilot prompts I can use in Microsoft Word to speed up and improve my work.
+
+Important:
+- Your output must be a list of copy-and-paste ready prompts only
+- Each prompt must be fully written so I can use it immediately in Copilot in Word without editing
+- Do not include explanations unless they are short and directly tied to the prompt
+- Make each prompt specific, realistic, and grounded in the kind of work I actually do
+
+For each prompt:
+- Write it as if I am speaking to Copilot
+- Include enough context so the prompt works on its own
+- Make it clear what inputs Copilot should use (for example: "based on this document", "using the following notes", "from this meeting transcript")
+
+Include a variety of prompt types, such as:
+- drafting documents from scratch
+- summarising existing content
+- rewriting or improving tone and clarity
+- structuring long documents
+- generating executive summaries
+- turning notes or transcripts into polished documents
+
+Also include a few more advanced prompts that combine Word with other M365 content, such as:
+- turning an email thread into a formal document
+- converting a Teams meeting transcript into a report
+- combining multiple documents into a single cohesive output
+
+Focus on prompts that will save me time, improve quality, and reflect how I actually work day-to-day.
+</pre>
+      </article>
+
+      <article class="panel" id="excel" style="--accent:#107C41" role="tabpanel">
+        <div class="panel-head">
+          <h2><span class="dot"></span>Excel</h2>
+          <button class="copy-btn" type="button" aria-label="Copy the Excel prompt"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 16V5a1 1 0 0 1 1-1h9"/></svg><span class="copy-label">Copy prompt</span></button>
+        </div>
+        <p class="panel-hint">Paste this into Copilot in Excel.</p>
+        <pre class="prompt">
+Based on my Microsoft 365 activity, analyse how I work with data by looking at:
+- my recently opened or modified Excel files
+- Excel files shared with me via email
+- attachments and data-heavy files I receive
+- the types of reports, trackers, or datasets I regularly interact with
+
+Identify patterns in how I use Excel — for example: reporting, tracking, analysis, dashboards, data cleaning, forecasting, or ad hoc analysis.
+
+Then generate a set of high-quality, practical Copilot prompts I can use in Excel to work more efficiently with my data.
+
+Important:
+- Your output must be a list of copy-and-paste ready prompts only
+- Each prompt must be fully written so I can use it immediately in Copilot in Excel without editing
+- Do not include explanations unless they are short and directly tied to the prompt
+- Make each prompt specific, realistic, and grounded in the way I actually use Excel
+
+For each prompt:
+- Write it as if I am speaking directly to Copilot
+- Clearly reference the data source (for example: "based on this workbook", "using this table", "from the attached file")
+- Ensure the prompt works as a standalone instruction
+
+Include a variety of prompt types, such as:
+- exploring and understanding datasets
+- cleaning and transforming data
+- creating formulas or explaining existing ones
+- generating summaries and insights
+- building charts and visualisations
+- identifying trends, anomalies, or risks
+
+Also include prompts that connect Excel to other workflows, such as:
+- analysing data from an emailed attachment
+- summarising insights to share with stakeholders
+- turning raw data into a report or presentation-ready summary
+
+Finally, include a few advanced prompts that:
+- combine data from multiple files
+- automate recurring analysis patterns
+- highlight opportunities for deeper insights or better decision-making using Copilot
+</pre>
+      </article>
+
+      <article class="panel" id="powerpoint" style="--accent:#C43E1C" role="tabpanel">
+        <div class="panel-head">
+          <h2><span class="dot"></span>PowerPoint</h2>
+          <button class="copy-btn" type="button" aria-label="Copy the PowerPoint prompt"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 16V5a1 1 0 0 1 1-1h9"/></svg><span class="copy-label">Copy prompt</span></button>
+        </div>
+        <p class="panel-hint">Paste this into Copilot in PowerPoint.</p>
+        <pre class="prompt">
+Based on everything you can see across my Microsoft 365 environment — including my emails, Teams chats, meeting transcripts, documents, and the type of work I do — analyse how I typically create and use presentations in PowerPoint.
+
+Identify the most common types of presentations I work on, such as training decks, workshop materials, customer or stakeholder briefings, status updates, or enablement content. Look for patterns in the requests I receive and the way I structure my slides.
+
+Then generate a set of high-quality, practical Copilot prompts I can use in Microsoft PowerPoint to speed up and improve my work.
+
+Important:
+- Your output must be a list of copy-and-paste ready prompts only
+- Each prompt must be fully written so I can use it immediately in Copilot in PowerPoint without editing
+- Do not include explanations unless they are short and directly tied to the prompt
+- Make each prompt specific, realistic, and grounded in the kind of work I actually do
+
+For each prompt:
+- Write it as if I am speaking to Copilot
+- Include enough context so the prompt works on its own
+- Make it clear what inputs Copilot should use (for example: "based on this Word document", "using the following notes", "from this meeting transcript")
+
+Include a variety of prompt types, such as:
+- building a presentation from scratch
+- turning a document or set of notes into a slide deck
+- summarising a long deck into key takeaways
+- improving the structure, flow, and narrative of an existing deck
+- rewriting slides for a specific audience or tone
+- generating speaker notes and talking points
+
+Also include a few more advanced prompts that combine PowerPoint with other M365 content, such as:
+- turning a Word report into a presentation
+- converting a Teams meeting transcript into a recap deck
+- building a training or enablement deck from existing materials
+
+Focus on prompts that will save me time, improve quality, and reflect how I actually work day-to-day.
+</pre>
+      </article>
+
+      <article class="panel" id="meetings" style="--accent:#5B5FC7" role="tabpanel">
+        <div class="panel-head">
+          <h2><span class="dot"></span>Meetings</h2>
+          <button class="copy-btn" type="button" aria-label="Copy the Meetings prompt"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 16V5a1 1 0 0 1 1-1h9"/></svg><span class="copy-label">Copy prompt</span></button>
+        </div>
+        <p class="panel-hint">Paste this into Microsoft 365 Copilot or Copilot in Teams.</p>
+        <pre class="prompt">
+Based on everything you can see across my Microsoft 365 environment — including my calendar, Teams chats, meeting invites, meeting transcripts, and the type of work I do — analyse how I typically prepare for, run, attend, and follow up on meetings.
+
+Identify the most common types of meetings I'm involved in, such as training sessions, workshops, 1:1s, team syncs, customer or stakeholder sessions, and planning meetings. Look for patterns in how I prepare, what I need during meetings, and how I follow up afterwards.
+
+Then generate a set of high-quality, practical Copilot prompts I can use to get more out of my meetings.
+
+Important:
+- Your output must be a list of copy-and-paste ready prompts only
+- Each prompt must be fully written so I can use it immediately in Copilot without editing
+- Do not include explanations unless they are short and directly tied to the prompt
+- Make each prompt specific, realistic, and grounded in the kind of meetings I actually have
+
+For each prompt:
+- Write it as if I am speaking to Copilot
+- Include enough context so the prompt works on its own
+- Make it clear what inputs Copilot should use (for example: "from this meeting transcript", "based on tomorrow's calendar invite", "using the chat from this meeting")
+
+Include a variety of prompt types, such as:
+- preparing for an upcoming meeting (agenda, background, key questions)
+- summarising a meeting from its transcript
+- extracting decisions, action items, and owners
+- drafting a follow-up email or Teams message after a meeting
+- catching up on a meeting I missed
+- tracking commitments and open items across recurring meetings
+
+Also include a few more advanced prompts that combine meetings with other M365 content, such as:
+- turning a meeting transcript into a formal recap document
+- preparing for a meeting using related emails and documents
+- summarising a series of recurring meetings into a single progress update
+
+Focus on prompts that will save me time, reduce follow-up effort, and reflect how I actually work day-to-day.
+</pre>
+      </article>
+
+      <article class="panel" id="email" style="--accent:#0F6CBD" role="tabpanel">
+        <div class="panel-head">
+          <h2><span class="dot"></span>Email</h2>
+          <button class="copy-btn" type="button" aria-label="Copy the Email prompt"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 16V5a1 1 0 0 1 1-1h9"/></svg><span class="copy-label">Copy prompt</span></button>
+        </div>
+        <p class="panel-hint">Paste this into Microsoft 365 Copilot or Copilot in Outlook — it will ask you questions first.</p>
+        <pre class="prompt">
+I want to build a personalised inbox prioritisation framework that I can reuse when asking Copilot to triage my emails. Ask me a series of questions (one at a time) to understand how I decide what is important vs not important in my inbox.
+
+Your questions should help uncover:
+- What types of emails I consider high priority (e.g. manager, customers, specific projects)
+- Time sensitivity (what feels urgent vs can wait)
+- Business impact (what actually moves work forward vs noise)
+- Patterns I notice (senders, keywords, topics, meeting follow-ups, approvals, etc.)
+- What I tend to ignore or deprioritise
+- Any exceptions or edge cases
+- How I currently feel about my inbox (overwhelmed, in control, reactive, etc.)
+- What "a good inbox day" looks like for me
+
+Once you've gathered enough information, synthesise my responses into a clear, structured "Inbox Prioritisation Guide" that includes:
+- My prioritisation principles (in plain language)
+- A tiered system (e.g. High / Medium / Low priority with rules for each)
+- Specific signals to look for (people, keywords, deadlines, actions required)
+- What to ignore or batch
+- Any personal preferences or working style notes
+
+Then create a final section called: "Prompt I can use with Copilot"
+
+In that section, write a reusable prompt that uses my framework to ask Copilot to prioritise my inbox based on my preferences. Make the output practical, concise, and something I could actually reference day-to-day.
+</pre>
+      </article>
+
+      <article class="panel" id="calendar" style="--accent:#038387" role="tabpanel">
+        <div class="panel-head">
+          <h2><span class="dot"></span>Calendar Management</h2>
+          <button class="copy-btn" type="button" aria-label="Copy the Calendar Management prompt"><svg class="btn-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M5 16V5a1 1 0 0 1 1-1h9"/></svg><span class="copy-label">Copy prompt</span></button>
+        </div>
+        <p class="panel-hint">Paste this into Microsoft 365 Copilot — it will ask you questions first.</p>
+        <pre class="prompt">
+I want to build a personalised calendar and time-prioritisation framework that I can reuse when asking Copilot to help me manage my calendar. Ask me a series of questions (one at a time) to understand how I decide what deserves my time and how I want my week to be structured.
+
+Your questions should help uncover:
+- What types of meetings I consider high value (e.g. delivery, customers, my manager, planning)
+- What I tend to accept automatically vs question vs decline
+- How much focus and preparation time I need, and when I do my best work
+- Time sensitivity (what genuinely needs me now vs what can be rescheduled)
+- Patterns I notice (recurring meetings, back-to-backs, meeting-heavy days, travel)
+- What I tend to over-commit to or wish I protected better
+- Any exceptions or edge cases (VIPs, certain teams, certain times of day)
+- How I currently feel about my calendar (overloaded, in control, fragmented, reactive)
+- What "a good calendar week" looks like for me
+
+Once you've gathered enough information, synthesise my responses into a clear, structured "Calendar Prioritisation Guide" that includes:
+- My time-management principles (in plain language)
+- A tiered system (e.g. Protect / Attend / Question / Decline with rules for each)
+- Specific signals to look for (people, meeting types, timing, preparation needed)
+- What to protect, batch, or decline
+- Any personal preferences or working-style notes
+
+Then create a final section called: "Prompt I can use with Copilot"
+
+In that section, write a reusable prompt that uses my framework to ask Copilot to review and prioritise my calendar based on my preferences. Make the output practical, concise, and something I could actually reference day-to-day.
+</pre>
+      </article>
+    </div>
+  </section>
+
+  <footer>Pick an app, copy the prompt, paste into Copilot — and let it tailor everything to you.</footer>
+</div>
+
+<script>
+(function(){
+  var tiles = document.querySelectorAll('.tile');
+  var panels = document.querySelectorAll('.panel');
+  function activate(id){
+    tiles.forEach(function(t){
+      var on = t.getAttribute('data-target') === id;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach(function(p){
+      p.classList.toggle('active', p.id === id);
+    });
+  }
+  tiles.forEach(function(t){
+    t.addEventListener('click', function(){
+      var id = t.getAttribute('data-target');
+      activate(id);
+      var panel = document.getElementById(id);
+      if(panel){ panel.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+    });
+  });
+  function flash(btn){
+    var label = btn.querySelector('.copy-label');
+    var prev = label.getAttribute('data-prev') || label.textContent;
+    label.setAttribute('data-prev', prev);
+    label.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(function(){ label.textContent = prev; btn.classList.remove('copied'); }, 1800);
+  }
+  function fallbackCopy(text, btn){
+    try{
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly','');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flash(btn);
+    }catch(e){ /* clipboard unavailable */ }
+  }
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var panel = btn.closest('.panel');
+      var text = panel.querySelector('.prompt').textContent.replace(/^\n/, '');
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(function(){ flash(btn); }, function(){ fallbackCopy(text, btn); });
+      }else{
+        fallbackCopy(text, btn);
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>
